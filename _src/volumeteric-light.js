@@ -93,8 +93,6 @@ import Rx from 'rxjs/Rx';
   }
 
   function init() {
-    console.log('init');
-
     var scene,
       camera,
       renderer,
@@ -115,7 +113,7 @@ import Rx from 'rxjs/Rx';
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1500);
 
     renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -128,7 +126,6 @@ import Rx from 'rxjs/Rx';
 
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       /*
@@ -148,63 +145,39 @@ import Rx from 'rxjs/Rx';
     onFrame();
 
     function setupScene() {
-      var geometry, material;
+      let geometry, material;
 
-      // var ambientLight = new THREE.AmbientLight(0x2c3e50);
-      // scene.add(ambientLight);
+      const imageWidth = 1920,
+        imageHeight = 725,
+        planeWidth = 1,
+        planeHeight = 1;
 
-      var width = 7,
-        height = 7,
-        size = 1,
-        w = width / size,
-        h = height / size;
+      geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
 
-      geometry = new THREE.PlaneGeometry(width, height, 1, 1);
-
-      /*
-      var uvs = geometry.faceVertexUvs[0];
-      uvs[0][0].set(0, h);
-      uvs[0][1].set(0, 0);
-      uvs[0][2].set(w, h);
-      uvs[1][0].set(0, 0);
-      uvs[1][1].set(w, 0);
-      uvs[1][2].set(w, h);
-      */
-
-      var texture = new THREE.TextureLoader().load('../img/1920_1920.png'); // new THREE.TextureLoader().load('../img/1920_1080.png');
-      // texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-      // texture.repeat.set(1, 1);
-
+      let texture = new THREE.TextureLoader().load('../img/1920x725.jpg'); // new THREE.TextureLoader().load('../img/1920_1080.png');
       material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
 
       plane = new THREE.Mesh(geometry, material);
+      plane.scale.x = imageWidth;
+      plane.scale.y = imageHeight;
       plane.position.set(0, 0, 0);
       scene.add(plane);
 
       pointLight = new THREE.PointLight(0xffffff);
       scene.add(pointLight);
 
-      geometry = new THREE.SphereBufferGeometry(1, 16, 16);
+      geometry = new THREE.SphereBufferGeometry(50, 16, 16);
       material = new THREE.MeshBasicMaterial({ color: 0xffffff });
       lightSphere = new THREE.Mesh(geometry, material);
       lightSphere.layers.set(OCCLUSION_LAYER);
       scene.add(lightSphere);
 
-      /*
-            geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-            material = new THREE.MeshPhongMaterial({ color: 0xe74c3c });
-            box = new THREE.Mesh(geometry, material);
-            box.position.z = 2;
-            scene.add(box);
-      
-            material = new THREE.MeshBasicMaterial({ color: 0x000000 });
-            occlusionBox = new THREE.Mesh(geometry, material);
-            occlusionBox.position.z = 2;
-            occlusionBox.layers.set(OCCLUSION_LAYER);
-            scene.add(occlusionBox);
-            */
+      // show axes in the screen
+      let axes = new THREE.AxesHelper(20);
+      scene.add(axes);
 
-      camera.position.z = 6;
+      camera.position.z = 1000;
+      camera.lookAt(scene.position);
     }
 
     function setupPostprocessing() {
@@ -315,20 +288,20 @@ import Rx from 'rxjs/Rx';
       folder = gui.addFolder('camera Position');
       folder
         .add(camera.position, 'x')
-        .min(-10)
-        .max(100)
+        .min(-100)
+        .max(1000)
         .step(0.1)
         .onChange(updateShaderLight);
       folder
         .add(camera.position, 'y')
-        .min(-10)
-        .max(100)
+        .min(-100)
+        .max(1000)
         .step(0.1)
         .onChange(updateShaderLight);
       folder
         .add(camera.position, 'z')
-        .min(-10)
-        .max(100)
+        .min(-100)
+        .max(1000)
         .step(0.1)
         .onChange(updateShaderLight);
 
@@ -353,6 +326,8 @@ import Rx from 'rxjs/Rx';
 
       // renderer.setClearColor(0x000000, 0.5);
       // renderer.render(scene, camera);
+
+      camera.lookAt(scene.position);
     }
 
     /*

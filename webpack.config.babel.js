@@ -8,11 +8,8 @@ function createConfig(isDebug, options = { outputPath: '', banner: '' }) {
     plugins = [];
 
   const appEntry = {
-    index: ['./_src/index.js'],
-    light: ['./_src/light.js'],
-
     'volumeteric-light': ['./_src/volumeteric-light.js'],
-    'point-light': ['./_src/point-light.js']
+    'match-size': ['./_src/match-size.js']
   };
 
   if (isDebug) {
